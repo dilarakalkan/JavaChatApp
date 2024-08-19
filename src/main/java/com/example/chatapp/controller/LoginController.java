@@ -1,44 +1,71 @@
 package com.example.chatapp.controller;
 
-import org.springframework.http.HttpStatus;
+import com.example.chatapp.dto.LoginRequest;
+import com.example.chatapp.model.AuthModel;
+import com.example.chatapp.service.LoginService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
-@Controller
+import java.util.Base64;
+import java.util.Date;
+
+
+
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("/auth")
 public class LoginController {
 
-    //private final AuthenticationManager authenticationManager;
+    @Autowired
+    private LoginService loginService;
 
-    /*public LoginController(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }*/
-
+    //@CrossOrigin(origins = "http://localhost:8082")
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            Authentication authenticationRequest =
-                    new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
-            /*Authentication authenticationResponse =
-                    this.authenticationManager.authenticate(authenticationRequest);*/
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        // AuthService kullanarak login işlemini gerçekleştirir
+        AuthModel user = loginService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
-            // If authentication is successful, return 200 OK
-            return ResponseEntity.ok().build();
-        } catch (AuthenticationException ex) {
-            // If authentication fails, return 401 Unauthorized
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (user != null) {
+            String token = Jwts.builder()
+                    .setSubject("user@example.com") // Kullanıcı adı gibi bilgiler token'a eklenir
+                    .setIssuedAt(new Date()) // Token oluşturulma zamanı
+                    .setExpiration(new Date(System.currentTimeMillis() + 864_000_00)) // 1 gün geçerlilik süresi
+                    .signWith(SignatureAlgorithm.NONE, (byte[]) null) // İmzalama algoritması olarak NONE kullanılıyor
+                    .compact();
+
+            return ResponseEntity.ok().body(token);
+        } else {
+            // Login başarısız ise hata mesajı döndürür
+            return ResponseEntity.status(401).body("Kullanıcı adı veya şifre hatalı!");
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> login2(@RequestBody LoginRequest loginRequest) {
+        // AuthService kullanarak login işlemini gerçekleştirir
+        AuthModel user = loginService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
-}
-record LoginRequest(String username, String password) {
+        if (user != null) {
+            String secretKey = "key8586"; // Bu key güvenli bir şekilde saklanmalıdır, genelde application.properties dosyasında tutulur.
+            String token = Jwts.builder()
+                    .setSubject(user.getUsername()) // Kullanıcı adı gibi bilgiler token'a eklenir
+                    .setIssuedAt(new Date()) // Token oluşturulma zamanı
+                    .setExpiration(new Date(System.currentTimeMillis() + 864_000_00)) // 1 gün geçerlilik süresi
+                    .signWith(SignatureAlgorithm.HS512, secretKey) // HMAC SHA512 algoritması ile imzalanır
+                    .compact(); // Token oluşturulur
+
+            return ResponseEntity.ok().body(token);
+        } else {
+            // Login başarısız ise hata mesajı döndürür
+            return ResponseEntity.status(401).body("Kullanıcı adı veya şifre hatalı!");
+        }
+    }
 }
 
 
