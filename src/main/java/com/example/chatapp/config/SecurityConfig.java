@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic Authentication'ı devre dışı bırakabilirsiniz
                 .formLogin(formLogin -> formLogin
                         .loginPage("/authpage") // AuthPage bileşenine yönlendirme
-                        .defaultSuccessUrl("/chat", true) // Giriş başarılı olduğunda yönlendirilecek sayfa
+                        //.defaultSuccessUrl("/chatspage", true) // Giriş başarılı olduğunda yönlendirilecek sayfa
                         .failureUrl("/authpage?error=true") // Giriş başarısız olduğunda yönlendirilecek sayfa
                         .permitAll()
                 )

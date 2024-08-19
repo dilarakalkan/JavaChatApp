@@ -32,12 +32,15 @@ public class LoginController {
         AuthModel user = loginService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
         if (user != null) {
-            String token = Jwts.builder()
-                    .setSubject("user@example.com") // Kullanıcı adı gibi bilgiler token'a eklenir
-                    .setIssuedAt(new Date()) // Token oluşturulma zamanı
-                    .setExpiration(new Date(System.currentTimeMillis() + 864_000_00)) // 1 gün geçerlilik süresi
-                    .signWith(SignatureAlgorithm.NONE, (byte[]) null) // İmzalama algoritması olarak NONE kullanılıyor
-                    .compact();
+         String SECRET_KEY = "MLaRy96a9qm47O8Xhqd08wdyoNQoJ3oNrK+pRxkEcxo="; // Güvenli bir anahtar kullanın
+
+                String token = Jwts.builder()
+                        .setSubject(user.getUsername())
+                        .setIssuedAt(new Date())
+                        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 saat geçerli
+                        .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
+                        .compact();
+
 
             return ResponseEntity.ok().body(token);
         } else {
