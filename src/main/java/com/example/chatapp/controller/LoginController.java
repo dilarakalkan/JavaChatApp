@@ -44,14 +44,14 @@ public class LoginController {
 
             return ResponseEntity.ok().body(token);
         } else {
-            // Login başarısız ise hata mesajı döndürür
+            // Login başarısız ise hata mesajı döndür
             return ResponseEntity.status(401).body("Kullanıcı adı veya şifre hatalı!");
         }
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> login2(@RequestBody LoginRequest loginRequest) {
-        // AuthService kullanarak login işlemini gerçekleştirir
+        // AuthService kullanarak login işlemini gerçekleştirilirr
         AuthModel user = loginService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
         if (user != null) {
