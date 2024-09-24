@@ -24,7 +24,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS yapılandırması
                 .csrf(csrf -> csrf.disable()) // CSRF korumasını devre dışı bırak
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**", "/js/**", "/css/**", "/img/**").permitAll()  // "/auth" ve diğer statik kaynakları izinli yap
+                      // "/auth" ve diğer statik kaynakları izinli yap
+                        .requestMatchers("/auth/**", "/websocket/**", "/js/**", "/css/**", "/img/**").permitAll()      // "/auth" ve diğer statik kaynakları izinli yap
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic Authentication'ı devre dışı bırakabilirsiniz
