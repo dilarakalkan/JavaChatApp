@@ -19,7 +19,6 @@ public class WebConfig implements WebMvcConfigurer {
 
 
 
-        // Add more mappings if needed...
     }
 
 }

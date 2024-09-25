@@ -7,32 +7,31 @@ import com.corundumstudio.socketio.annotation.OnEvent;
 import org.springframework.stereotype.Service;
 
 
+@Service
+public class SocketIOService {
 
-    @Service
-    public class SocketIOService {
+    private final SocketIOServer socketIOServer;
 
-        private final SocketIOServer socketIOServer;
-
-        public SocketIOService(SocketIOServer socketIOServer) {
-            this.socketIOServer = socketIOServer;
-        }
-
-        @OnConnect
-        public void onConnect() {
-            System.out.println("Client connected");
-        }
-
-        @OnDisconnect
-        public void onDisconnect() {
-            System.out.println("Client disconnected");
-        }
-
-        @OnEvent("message")
-        public void onMessage(String message) {
-            System.out.println("Message received: " + message);
-            // Mesajı tüm bağlı kullanıcılara gönder
-            socketIOServer.getBroadcastOperations().sendEvent("message", message);
-        }
+    public SocketIOService(SocketIOServer socketIOServer) {
+        this.socketIOServer = socketIOServer;
     }
+
+    @OnConnect
+    public void onConnect() {
+        System.out.println("Client connected");
+    }
+
+    @OnDisconnect
+    public void onDisconnect() {
+        System.out.println("Client disconnected");
+    }
+
+    @OnEvent("message")
+    public void onMessage(String message) {
+        System.out.println("Message received: " + message);
+        // Mesajı tüm bağlı kullanıcılara gönder
+        socketIOServer.getBroadcastOperations().sendEvent("message", message);
+    }
+}
 
 

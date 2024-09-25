@@ -12,6 +12,22 @@ public class SocketIOConfig {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
         config.setHostname("localhost");
         config.setPort(3000); // Socket.IO server port
-        return new SocketIOServer(config);
+
+        // SocketIOServer nesnesini
+        SocketIOServer server = new SocketIOServer(config);
+
+
+        server.addConnectListener(client -> {
+            System.out.println("Client connected: " + client.getSessionId());
+        });
+
+        server.addDisconnectListener(client -> {
+            System.out.println("Client disconnected: " + client.getSessionId());
+        });
+
+
+        server.start();
+
+        return server;
     }
 }
